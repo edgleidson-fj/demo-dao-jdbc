@@ -1,14 +1,18 @@
 package main;
 
-import model.entidade.Departamento;
+import java.util.Date;
 
-//Aula 238 - DAO JDBC - (Classe Departamento).
+import model.entidade.Departamento;
+import model.entidade.Vendedor;
+
+//Aula 239 - DAO JDBC - (Classe Vendedor).
 public class Main {
 
 	public static void main(String[] args) {
 		
-		Departamento obj = new Departamento(1, "BOOKS");
-		System.out.println(obj);
+		Departamento dep = new Departamento(1, "BOOKS");
+		Vendedor vend = new Vendedor(1, "Fulano", "fulano@teste,com", new Date(), 3000.0, dep);
+		System.out.println(vend);
 	}
 
 }
