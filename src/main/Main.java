@@ -5,7 +5,7 @@ import java.util.Date;
 import model.entidade.Departamento;
 import model.entidade.Vendedor;
 
-//Aula 239 - DAO JDBC - (Classe Vendedor).
+//Aula 240 - DAO JDBC - (Departamento DAO).
 public class Main {
 
 	public static void main(String[] args) {
