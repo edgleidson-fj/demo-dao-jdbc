@@ -1,25 +1,19 @@
 package main;
 
-import java.util.Date;
-
 import model.dao.DaoFactory;
-import model.dao.DepartamentoDao;
 import model.dao.VendedorDao;
-import model.entidade.Departamento;
 import model.entidade.Vendedor;
 
-//Aula 240 - DAO JDBC - (Departamento DAO).
+//Aula 242 - DAO JDBC - (Implementando buscarPorId - [Vendedor]).
 public class Main {
 
 	public static void main(String[] args) {
 		
-		Departamento dep = new Departamento(1, "BOOKS");
-		Vendedor vend = new Vendedor(1, "Fulano", "fulano@teste,com", new Date(), 3000.0, dep);
-		System.out.println(vend);
+		VendedorDao vendDao = DaoFactory.criarVendedorDao();
 		
-		// Factory.
-		VendedorDao vendedorDao = DaoFactory.criarVendedorDao();
-		DepartamentoDao departamentoDao = DaoFactory.criarDepartamentoDao();
+		Vendedor vend = vendDao.buscarPorId(3);
+		
+		System.out.println(vend);
 	}
 
 }
