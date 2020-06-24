@@ -45,35 +45,44 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			ps = connection.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " 
-					+ "FROM seller INNER JOIN department "
-					+ "ON seller.DepartmentId = department.Id "
-					+ "WHERE seller.Id = ? ");
-			
+					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ? ");
+
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
-			if(rs.next()) {
-				Departamento dep = new Departamento();
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setNome(rs.getString("DepName"));
-				Vendedor vend = new Vendedor();
-				vend.setId(rs.getInt("Id"));
-				vend.setNome(rs.getString("Name"));
-				vend.setEmail(rs.getString("Email"));
-				vend.setSalarioBase(rs.getDouble("BaseSalary"));
-				vend.setNascimento(rs.getDate("BirthDate"));
-				vend.setDepartamento(dep);
+			if (rs.next()) {
+				Departamento dep = instanciarFuncaoDepartamento(rs);
+				Vendedor vend = instaciarFuncaoVendedor(rs, dep);
 				return vend;
 			}
 			return null;
-		} 
-		catch (SQLException ex) {
+		} catch (SQLException ex) {
 			throw new BDException(ex.getMessage());
-		}
-		finally {
+		} finally {
 			BD.fecharStatement(ps);
 			BD.fecharResultSet(rs);
 		}
+	}
+
+	// Função Departamento(ResultSet) - Propagando Exception.
+		private Departamento instanciarFuncaoDepartamento(ResultSet rs) throws SQLException {
+			Departamento dep = new Departamento();
+			dep.setId(rs.getInt("DepartmentId"));
+			dep.setNome(rs.getString("DepName"));
+			return dep;
+		}
+	
+	// Função Vendedor(ResultSet, Departamento).
+	private Vendedor instaciarFuncaoVendedor(ResultSet rs, Departamento dep) throws SQLException {
+		Vendedor vend = new Vendedor();
+		new Vendedor();
+		vend.setId(rs.getInt("Id"));
+		vend.setNome(rs.getString("Name"));
+		vend.setEmail(rs.getString("Email"));
+		vend.setSalarioBase(rs.getDouble("BaseSalary"));
+		vend.setNascimento(rs.getDate("BirthDate"));
+		vend.setDepartamento(dep);
+		return vend;
 	}
 
 	@Override
