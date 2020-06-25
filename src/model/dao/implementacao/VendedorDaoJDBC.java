@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bd.BD;
 import bd.BDException;
@@ -24,19 +27,16 @@ public class VendedorDaoJDBC implements VendedorDao {
 	@Override
 	public void inserir(Vendedor obj) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void atualizar(Vendedor obj) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void excluirPorId(Integer id) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -45,23 +45,33 @@ public class VendedorDaoJDBC implements VendedorDao {
 		ResultSet rs = null;
 		try {
 			ps = connection.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ? ");
-
+					"SELECT seller.*, department.Name as DepName " 
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id " 
+					+ "WHERE seller.Id = ? ");
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
+			
 			if (rs.next()) {
 				Departamento dep = instanciarFuncaoDepartamento(rs);
 				Vendedor vend = instaciarFuncaoVendedor(rs, dep);
 				return vend;
 			}
 			return null;
-		} catch (SQLException ex) {
+		} 
+		catch (SQLException ex) {
 			throw new BDException(ex.getMessage());
-		} finally {
+		} 
+		finally {
 			BD.fecharStatement(ps);
 			BD.fecharResultSet(rs);
 		}
+	}
+	
+	@Override
+	public List<Vendedor> listarTudo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// Função Departamento(ResultSet) - Propagando Exception.
@@ -86,9 +96,41 @@ public class VendedorDaoJDBC implements VendedorDao {
 	}
 
 	@Override
-	public List<Vendedor> listarTudo() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Vendedor> buscarPorDepartamento(Departamento departamento) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(
+					"SELECT seller.*,department.Name as DepName  FROM seller "
+					+ "INNER JOIN department  ON seller.DepartmentId = department.Id "
+					+ "WHERE DepartmentId = ? "
+					+ "ORDER BY Name ");
+			ps.setInt(1, departamento.getId());
+			rs = ps.executeQuery();
+			
+			List<Vendedor> lista = new ArrayList<>();
+			
+			//Para controlar a não repetição do Departamento.
+			Map<Integer, Departamento> map = new HashMap<>();
+			
+			while (rs.next()) {				
+				Departamento depNaoRepetido = map.get(rs.getInt("DepartmentId"));
+				
+				if(depNaoRepetido == null) {
+					depNaoRepetido = instanciarFuncaoDepartamento(rs);	
+					map.put(rs.getInt("DepartmentId"), depNaoRepetido);
+				}				
+				Vendedor vend = instaciarFuncaoVendedor(rs, depNaoRepetido);
+				lista.add(vend); //Adicionando Vendedor a lista.
+			}
+			return lista;
+		} 
+		catch (SQLException ex) {
+			throw new BDException(ex.getMessage());
+		} 
+		finally {
+			BD.fecharStatement(ps);
+			BD.fecharResultSet(rs);
+		}
 	}
-
 }
