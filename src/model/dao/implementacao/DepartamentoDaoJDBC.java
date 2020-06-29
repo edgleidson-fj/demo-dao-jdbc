@@ -32,7 +32,7 @@ public class DepartamentoDaoJDBC implements DepartamentoDao{
 	}
 
 	@Override
-	public List<Departamento> listarTudo() {
+	public List<Departamento> buscarTudo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

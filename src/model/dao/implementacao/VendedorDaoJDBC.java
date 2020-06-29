@@ -26,17 +26,14 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 	@Override
 	public void inserir(Vendedor obj) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void atualizar(Vendedor obj) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void excluirPorId(Integer id) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -69,11 +66,83 @@ public class VendedorDaoJDBC implements VendedorDao {
 	}
 	
 	@Override
-	public List<Vendedor> listarTudo() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Vendedor> buscarTudo() {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(
+					"SELECT seller.*,department.Name as DepName  FROM seller "
+					+ "INNER JOIN department  ON seller.DepartmentId = department.Id "
+					+ "ORDER BY Name ");
+			rs = ps.executeQuery();
+			
+			List<Vendedor> lista = new ArrayList<>();
+			
+			//Map<chave , valor> - Para controlar a não repetição do Departamento desnecessáriamente.
+			Map<Integer, Departamento> map = new HashMap<>();
+			
+			while (rs.next()) {				
+				Departamento depNaoRepetido = map.get(rs.getInt("DepartmentId"));
+				
+				//Se não existir Map com ID do Departamento o sistema cria um, se não, utiliza o que já existe no Map. 
+				if(depNaoRepetido == null) {
+					depNaoRepetido = instanciarFuncaoDepartamento(rs);	
+					map.put(rs.getInt("DepartmentId"), depNaoRepetido); //Inserir no Map<chave , valor>.
+				}				
+				Vendedor vend = instaciarFuncaoVendedor(rs, depNaoRepetido);
+				lista.add(vend); 
+			}
+			return lista;
+		} 
+		catch (SQLException ex) {
+			throw new BDException(ex.getMessage());
+		} 
+		finally {
+			BD.fecharStatement(ps);
+			BD.fecharResultSet(rs);
+		}
 	}
 
+	@Override
+	public List<Vendedor> buscarPorDepartamento(Departamento departamento) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(
+					"SELECT seller.*,department.Name as DepName  FROM seller "
+					+ "INNER JOIN department  ON seller.DepartmentId = department.Id "
+					+ "WHERE DepartmentId = ? "
+					+ "ORDER BY Name ");
+			ps.setInt(1, departamento.getId());
+			rs = ps.executeQuery();
+			
+			List<Vendedor> lista = new ArrayList<>();
+			
+			//Map<chave , valor> - Para controlar a não repetição do Departamento desnecessáriamente.
+			Map<Integer, Departamento> map = new HashMap<>();
+			
+			while (rs.next()) {				
+				Departamento depNaoRepetido = map.get(rs.getInt("DepartmentId"));
+				
+				//Se não existir Map com ID do Departamento o sistema cria um, se não, utiliza o que já existe no Map. 
+				if(depNaoRepetido == null) {
+					depNaoRepetido = instanciarFuncaoDepartamento(rs);	
+					map.put(rs.getInt("DepartmentId"), depNaoRepetido); //Inserir no Map<chave , valor>.
+				}				
+				Vendedor vend = instaciarFuncaoVendedor(rs, depNaoRepetido);
+				lista.add(vend); 
+			}
+			return lista;
+		} 
+		catch (SQLException ex) {
+			throw new BDException(ex.getMessage());
+		} 
+		finally {
+			BD.fecharStatement(ps);
+			BD.fecharResultSet(rs);
+		}
+	}
+	
 	// Função Departamento(ResultSet) - Propagando Exception.
 		private Departamento instanciarFuncaoDepartamento(ResultSet rs) throws SQLException {
 			Departamento dep = new Departamento();
@@ -93,44 +162,5 @@ public class VendedorDaoJDBC implements VendedorDao {
 		vend.setNascimento(rs.getDate("BirthDate"));
 		vend.setDepartamento(dep);
 		return vend;
-	}
-
-	@Override
-	public List<Vendedor> buscarPorDepartamento(Departamento departamento) {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			ps = connection.prepareStatement(
-					"SELECT seller.*,department.Name as DepName  FROM seller "
-					+ "INNER JOIN department  ON seller.DepartmentId = department.Id "
-					+ "WHERE DepartmentId = ? "
-					+ "ORDER BY Name ");
-			ps.setInt(1, departamento.getId());
-			rs = ps.executeQuery();
-			
-			List<Vendedor> lista = new ArrayList<>();
-			
-			//Para controlar a não repetição do Departamento.
-			Map<Integer, Departamento> map = new HashMap<>();
-			
-			while (rs.next()) {				
-				Departamento depNaoRepetido = map.get(rs.getInt("DepartmentId"));
-				
-				if(depNaoRepetido == null) {
-					depNaoRepetido = instanciarFuncaoDepartamento(rs);	
-					map.put(rs.getInt("DepartmentId"), depNaoRepetido);
-				}				
-				Vendedor vend = instaciarFuncaoVendedor(rs, depNaoRepetido);
-				lista.add(vend); //Adicionando Vendedor a lista.
-			}
-			return lista;
-		} 
-		catch (SQLException ex) {
-			throw new BDException(ex.getMessage());
-		} 
-		finally {
-			BD.fecharStatement(ps);
-			BD.fecharResultSet(rs);
-		}
 	}
 }

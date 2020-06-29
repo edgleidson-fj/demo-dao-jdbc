@@ -7,7 +7,7 @@ import model.dao.VendedorDao;
 import model.entidade.Departamento;
 import model.entidade.Vendedor;
 
-//Aula 244 - DAO JDBC - (Implementando buscarPorDepartamento).
+//Aula 246 - DAO JDBC - (Implementando buscarTudo - Vendedor).
 public class Main {
 
 	public static void main(String[] args) {
@@ -21,6 +21,13 @@ public class Main {
 		System.out.println("\n=== TESTE 2: seller buscarPorDepartamento  ===");	
 		Departamento dep = new Departamento(2, null);
 		List<Vendedor> lista = vendDao.buscarPorDepartamento(dep);
+		
+		for(Vendedor v : lista) {
+			System.out.println(v);
+		}
+		
+		System.out.println("\n=== TESTE 3: seller buscarTudo  ===");	
+		lista = vendDao.buscarTudo();
 		
 		for(Vendedor v : lista) {
 			System.out.println(v);

@@ -11,6 +11,6 @@ public interface VendedorDao {
 	void atualizar(Vendedor obj);
 	void excluirPorId(Integer id);
 	Vendedor buscarPorId(Integer id);
-	List<Vendedor> listarTudo();
+	List<Vendedor> buscarTudo();
 	List<Vendedor> buscarPorDepartamento(Departamento departamento);
 }

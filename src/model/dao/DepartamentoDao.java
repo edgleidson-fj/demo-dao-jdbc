@@ -10,5 +10,5 @@ public interface DepartamentoDao {
 	void atualizar(Departamento obj);
 	void excluirPorId(Integer id);
 	Departamento buscarPorId(Integer id);
-	List<Departamento> listarTudo();
+	List<Departamento> buscarTudo();
 }
