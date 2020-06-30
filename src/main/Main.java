@@ -2,16 +2,19 @@ package main;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import model.dao.DaoFactory;
 import model.dao.VendedorDao;
 import model.entidade.Departamento;
 import model.entidade.Vendedor;
 
-//Aula 248 - DAO JDBC - (Implementando UPDATE - Vendedor).
+//Aula 249 - DAO JDBC - (Implementando DELETE - Vendedor).
 public class Main {
 
 	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
 		
 		VendedorDao vendDao = DaoFactory.criarVendedorDao();
 		
@@ -47,6 +50,14 @@ public class Main {
 		vend.setDepartamento(dep);
 		vendDao.atualizar(vend);
 		System.out.println("UPDATE realizado com sucesso!");
+		
+		System.out.println("\n=== TESTE 6: seller Delete  ===");
+		System.out.print("Informe o ID do Vendedor para teste de DELETE? ");
+		int idVendendedor = sc.nextInt();
+		vendDao.excluirPorId(idVendendedor);
+		System.out.println("DELETE realizado com sucesso!"); 
+		
+		sc.close();
 	}
 
 }

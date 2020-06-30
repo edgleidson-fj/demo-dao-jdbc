@@ -89,6 +89,20 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 	@Override
 	public void excluirPorId(Integer id) {
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(
+					"DELETE FROM seller  "
+					+ "WHERE Id = ? ");
+			ps.setInt(1, id);
+			ps.execute();
+		} 
+		catch (SQLException ex) {
+			throw new BDException(ex.getMessage());
+		}
+		finally {
+			BD.fecharStatement(ps);
+		}
 	}
 
 	@Override
