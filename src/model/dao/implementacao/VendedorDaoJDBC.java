@@ -33,7 +33,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 					"INSERT INTO seller "
 					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) " 
 					+ "VALUES  (?, ?, ?, ?, ?) ",
-					Statement.RETURN_GENERATED_KEYS); // Retornar o ID do Vendedor após o INSERT.
+					Statement.RETURN_GENERATED_KEYS); // Retornar o ID após o INSERT.
 
 			ps.setString(1, obj.getNome());
 			ps.setString(2, obj.getEmail());
@@ -43,9 +43,9 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 			int linhasAfetadas = ps.executeUpdate();
 			if (linhasAfetadas > 0) {
-				ResultSet rs = ps.getGeneratedKeys(); // Pegando o ID do Vendedor.
+				ResultSet rs = ps.getGeneratedKeys(); // ID gerado no Insert.
 				if (rs.next()) {
-					int id = rs.getInt(1); // 1ª (?).
+					int id = rs.getInt(1); // ID do insert.
 					obj.setId(id);
 				}
 				BD.fecharResultSet(rs);
